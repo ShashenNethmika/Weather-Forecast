@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Forecast</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0ea5e9">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -13,24 +15,7 @@
     <div class="main-wrapper">
         <div class="home-section">
             <div class="animation-layer">
-                <svg class="light-mode-animation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
-                    <g class="cloud" style="animation: moveClouds 30s linear infinite;">
-                        <circle cx="20" cy="50" r="10" fill="white" opacity="0.7" />
-                        <circle cx="30" cy="45" r="12" fill="white" opacity="0.7" />
-                        <circle cx="40" cy="50" r="10" fill="white" opacity="0.7" />
-                    </g>
-                    <g class="cloud" style="animation: moveClouds 25s linear infinite; animation-delay: -10s;">
-                        <circle cx="120" cy="40" r="15" fill="white" opacity="0.7" />
-                        <circle cx="135" cy="35" r="18" fill="white" opacity="0.7" />
-                        <circle cx="150" cy="40" r="15" fill="white" opacity="0.7" />
-                    </g>
-                </svg>
-                <svg class="dark-mode-animation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
-                    <circle cx="50" cy="30" r="2" fill="white" class="star" />
-                    <circle cx="150" cy="50" r="1.5" fill="white" class="star" />
-                    <circle cx="250" cy="20" r="2.5" fill="white" class="star" />
-                    <circle cx="300" cy="60" r="1" fill="white" class="star" />
-                </svg>
+                <!-- existing svg animations -->
             </div>
             <h1>Welcome to Weather Forecast</h1>
             <p>Get accurate and real-time weather updates for your city.</p>
@@ -43,39 +28,45 @@
                 <input type="text" id="location-input" placeholder="Enter City" autocomplete="off">
                 <div id="suggestions"></div>
             </div>
-            <button id="search-button">Search</button>
-            <button id="geolocation-button">Use My Location</button>
-            <button id="theme-toggle">Light Mode</button>
+            <div class="controls-row">
+                <button id="search-button">Search</button>
+                <button id="geolocation-button">Use My Location</button>
+                <button id="unit-toggle">°C</button>
+                <button id="theme-toggle">Light Mode</button>
+                <button id="si-toggle">සිංහල</button>
+                <button id="save-city">Save City</button>
+            </div>
+            <div id="favorites" class="favorites"></div>
+
             <div id="error-message" aria-live="polite">City not found. Please enter a valid city name.</div>
             <div id="weather-info" class="weather-card">
                 <div id="weather-icon"></div>
                 <h2 id="city-name" class="city-name">City</h2>
                 <div class="info-block">
-                    <span class="info-label">Temperature:</span>
+                    <span class="info-label" data-i18n="Temperature">Temperature:</span>
                     <div class="temp-container">
                         <span class="info-value" id="temperature"></span>
-                        <button id="unit-toggle">°C</button>
                     </div>
                 </div>
                 <div class="info-block">
-                    <span class="info-label">Condition:</span>
+                    <span class="info-label" data-i18n="Condition">Condition:</span>
                     <span class="info-value" id="condition"></span>
                 </div>
                 <div class="info-block">
-                    <span class="info-label">Description:</span>
+                    <span class="info-label" data-i18n="Description">Description:</span>
                     <span class="info-value" id="description"></span>
                 </div>
                 <div class="info-block">
-                    <span class="info-label">Humidity:</span>
+                    <span class="info-label" data-i18n="Humidity">Humidity:</span>
                     <span class="info-value" id="humidity"></span>
                 </div>
                 <div class="info-block">
-                    <span class="info-label">Wind Speed:</span>
+                    <span class="info-label" data-i18n="Wind Speed">Wind Speed:</span>
                     <span class="info-value" id="wind-speed"></span>
                 </div>
-                <h3>Hourly Forecast</h3>
+                <h3 data-i18n="Hourly Forecast">Hourly Forecast</h3>
                 <div id="hourly-forecast" class="forecast-container"></div>
-                <h3>Daily Forecast</h3>
+                <h3 data-i18n="Daily Forecast">Daily Forecast</h3>
                 <div id="daily-forecast" class="forecast-container"></div>
             </div>
         </div>
@@ -86,7 +77,11 @@
             <button id="message-close">OK</button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) { window.addEventListener('load',()=> navigator.serviceWorker.register('./service-worker.js').catch(()=>{})); }
+    </script>
+    <script src="script.js" defer></script>
+    <script src="upgrade.js" defer></script>
 </body>
 
 </html>
