@@ -110,72 +110,55 @@ document.addEventListener("DOMContentLoaded", () => {
     customMessage.classList.remove("visible");
   });
 
-  async function fetchWeatherData() {
+  async function fetchAndDisplayWeather(currentWeatherUrl, forecastUrl) {
+    searchButton.textContent = "Searching...";
+    searchButton.disabled = true;
+    errorMessageElement.classList.remove("visible");
+    weatherInfo.style.display = "none";
+
+    try {
+        const [currentResponse, forecastResponse] = await Promise.all([
+            fetch(currentWeatherUrl),
+            fetch(forecastUrl),
+        ]);
+
+        if (!currentResponse.ok) {
+            throw new Error(`Current weather data not found: ${currentResponse.status}`);
+        }
+        if (!forecastResponse.ok) {
+            throw new Error(`Forecast data not found: ${forecastResponse.status}`);
+        }
+
+        const currentData = await currentResponse.json();
+        const forecastData = await forecastResponse.json();
+
+        displayWeather(currentData, forecastData);
+    } catch (error) {
+        console.error("Fetch error:", error);
+        errorMessageElement.textContent = "We could not find the city you entered. Please try again.";
+        errorMessageElement.classList.add("visible");
+    } finally {
+        searchButton.textContent = "Search";
+        searchButton.disabled = false;
+    }
+}
+
+async function fetchWeatherData() {
     const location = locationInput.value.trim();
     if (!location) {
-      showCustomMessage();
-      return;
+        showCustomMessage();
+        return;
     }
-    searchButton.textContent = "Searching...";
-    searchButton.disabled = true;
-    try {
-      const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`;
-      const currentResponse = await fetch(currentWeatherUrl);
-      if (!currentResponse.ok)
-        throw new Error(
-          `Current weather data not found: ${currentResponse.status}`
-        );
-      const currentData = await currentResponse.json();
+    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${apiKey}&units=metric`;
+    await fetchAndDisplayWeather(currentWeatherUrl, forecastUrl);
+}
 
-      const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${apiKey}&units=metric`;
-      const forecastResponse = await fetch(forecastUrl);
-      if (!forecastResponse.ok)
-        throw new Error(`Forecast data not found: ${currentResponse.status}`);
-      const forecastData = await forecastResponse.json();
-
-      displayWeather(currentData, forecastData);
-      searchButton.textContent = "Search";
-      searchButton.disabled = false;
-    } catch (error) {
-      console.error("Fetch error:", error);
-      errorMessageElement.textContent = error.message;
-      errorMessageElement.classList.add("visible");
-      weatherInfo.style.display = "none";
-      searchButton.textContent = "Search";
-      searchButton.disabled = false;
-    }
-  }
-
-  async function fetchWeatherDataByCoords(lat, lon) {
-    searchButton.textContent = "Searching...";
-    searchButton.disabled = true;
-    try {
-      const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-      const currentResponse = await fetch(currentWeatherUrl);
-      if (!currentResponse.ok)
-        throw new Error(
-          `Current weather data not found: ${currentResponse.status}`
-        );
-      const currentData = await currentResponse.json();
-
-      const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-      const forecastResponse = await fetch(forecastUrl);
-      if (!forecastResponse.ok)
-        throw new Error(`Forecast data not found: ${currentResponse.status}`);
-      const forecastData = await forecastResponse.json();
-
-      displayWeather(currentData, forecastData);
-      searchButton.textContent = "Search";
-      searchButton.disabled = false;
-    } catch (error) {
-      console.error("Fetch error:", error);
-      errorMessageElement.textContent = error.message;
-      errorMessageElement.classList.add("visible");
-      weatherInfo.style.display = "none";
-      searchButton.textContent = "Search";
-      searchButton.disabled = false;
-    }
-  }
+async function fetchWeatherDataByCoords(lat, lon) {
+    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    await fetchAndDisplayWeather(currentWeatherUrl, forecastUrl);
+}
 
   function getStaticIconUrl(iconCode) {
     return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
@@ -183,17 +166,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getConditionText(iconCode) {
     if (!iconCode) return "Unknown";
-    if (iconCode.startsWith("01")) return "Clear Sky";
-    if (iconCode.startsWith("02")) return "Few Clouds";
-    if (iconCode.startsWith("03")) return "Scattered Clouds";
-    if (iconCode.startsWith("04")) return "Broken Clouds";
-    if (iconCode.startsWith("09")) return "Shower Rain";
-    if (iconCode.startsWith("10")) return "Rain";
-    if (iconCode.startsWith("11")) return "Thunderstorm";
-    if (iconCode.startsWith("13")) return "Snow";
-    if (iconCode.startsWith("50")) return "Mist";
-    return "Unknown";
-  }
+    const conditionMap = new Map([
+        ["01", "Clear Sky"],
+        ["02", "Few Clouds"],
+        ["03", "Scattered Clouds"],
+        ["04", "Broken Clouds"],
+        ["09", "Shower Rain"],
+        ["10", "Rain"],
+        ["11", "Thunderstorm"],
+        ["13", "Snow"],
+        ["50", "Mist"],
+    ]);
+    const prefix = iconCode.substring(0, 2);
+    return conditionMap.get(prefix) || "Unknown";
+}
 
   function loadWeatherIcon(container, iconCode) {
     container.innerHTML = "";
@@ -210,6 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function displayWeather(currentData, forecastData) {
+    const weatherIconLink = document.getElementById("weather-icon-link");
+    weatherIconLink.href = `https://openweathermap.org/city/${currentData.id}`;
     cityNameElement.textContent = currentData.name || "Unknown City";
     originalTemp = currentData.main.temp || 0;
     temperatureElement.textContent = `${Math.round(originalTemp)}°C`;
