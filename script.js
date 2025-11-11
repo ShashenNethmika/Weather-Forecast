@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const customMessage = document.getElementById("custom-message");
   const messageClose = document.getElementById("message-close");
 
-  const apiKey = "502881aadda5ce1478fdaceb0a63f6fa";
+  const apiKey = "YOUR_API_KEY_HERE";
   let originalTemp;
   let currentUnit = "C";
 
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     try {
-      const url = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+      const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
         query
       )}&limit=5&appid=${apiKey}`;
       const response = await fetch(url);
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
       searchButton.disabled = false;
     } catch (error) {
       console.error("Fetch error:", error);
-      errorMessageElement.textContent = error.message;
+      errorMessageElement.textContent = "Could not find the requested city. Please try again.";
       errorMessageElement.classList.add("visible");
       weatherInfo.style.display = "none";
       searchButton.textContent = "Search";
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
       searchButton.disabled = false;
     } catch (error) {
       console.error("Fetch error:", error);
-      errorMessageElement.textContent = error.message;
+      errorMessageElement.textContent = "Could not find the requested city. Please try again.";
       errorMessageElement.classList.add("visible");
       weatherInfo.style.display = "none";
       searchButton.textContent = "Search";
@@ -217,6 +217,11 @@ document.addEventListener("DOMContentLoaded", () => {
       currentData.weather[0].description || "No description";
     humidityElement.textContent = `${currentData.main.humidity || 0}%`;
     windSpeedElement.textContent = `${currentData.wind.speed || 0} m/s`;
+
+    const weatherIconLink = document.getElementById("weather-icon-link");
+    if (weatherIconLink) {
+      weatherIconLink.href = `https://openweathermap.org/city/${currentData.id}`;
+    }
 
     const iconCode = currentData.weather[0].icon || "01d";
     loadWeatherIcon(weatherIcon, iconCode);
