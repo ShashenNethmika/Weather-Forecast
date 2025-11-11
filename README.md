@@ -10,7 +10,7 @@ A modern, responsive weather forecast web application built with HTML, CSS, and 
 ## Features
 
 - **Real-Time Weather Data**: Fetches current weather, hourly, and 5-day forecast data using the OpenWeatherMap API.
-- **Animated Weather Icons**: Main weather icon is animated (sourced from amCharts) and clickable, linking to OpenWeatherMap city pages.
+- **Static Weather Icons**: Main weather icon is a static PNG from OpenWeatherMap.
 - **Glow Effects**: Hover over city names, labels, and values to see a glowing text effect.
 - **Dark/Light Mode**: Toggle between light and dark themes with local storage persistence.
 - **Geolocation Support**: Use your current location to fetch weather data.
@@ -80,7 +80,6 @@ weather-forecast/
 - **CSS3**: Styling with custom variables, animations, and responsive design.
 - **JavaScript (ES6)**: Logic for API integration, DOM manipulation, and interactivity.
 - **OpenWeatherMap API**: Weather data source.
-- **amCharts**: Animated SVG weather icons.
 
 ## Screenshots
 
@@ -109,7 +108,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - [OpenWeatherMap](https://openweathermap.org/) for the weather API.
-- [amCharts](https://www.amcharts.com/) for animated weather icons.
 - [Poppins Font](https://fonts.google.com/specimen/Poppins) from Google Fonts.
 
 ## Contact
