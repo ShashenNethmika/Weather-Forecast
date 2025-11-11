@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const customMessage = document.getElementById("custom-message");
   const messageClose = document.getElementById("message-close");
 
-  const apiKey = "502881aadda5ce1478fdaceb0a63f6fa";
+  const apiKey = "YOUR_API_KEY_HERE";
   let originalTemp;
   let currentUnit = "C";
 
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     try {
-      const url = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+      const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
         query
       )}&limit=5&appid=${apiKey}`;
       const response = await fetch(url);
