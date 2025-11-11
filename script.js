@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const customMessage = document.getElementById("custom-message");
   const messageClose = document.getElementById("message-close");
 
-  const apiKey = "YOUR_API_KEY_HERE";
+  const apiKey = "502881aadda5ce1478fdaceb0a63f6fa";
   let originalTemp;
   let currentUnit = "C";
 
